@@ -34,6 +34,18 @@ export interface MatrixData {
   };
 }
 
+export type ProblemPriority = "Important" | "Urgent" | "Plus Urgent";
+export type ProblemStatus = "Reported" | "Waiting" | "Handled";
+
+export interface ReportedProblem {
+  id: string;
+  room: string;
+  description: string;
+  priority: ProblemPriority;
+  status: ProblemStatus;
+  timestamp: number;
+}
+
 export interface IntegrationReport {
   timestamp: string;
   totalChecked: number;

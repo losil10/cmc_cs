@@ -11,54 +11,54 @@ interface Props {
 export const IntegrationReportView: React.FC<Props> = ({ report, allGroups }) => {
   if (!report) {
     return (
-      <div className="text-center py-20 bg-white dark:bg-[#1E293B] rounded-[2rem] border-2 border-dashed border-slate-100 dark:border-slate-800">
-        <FileBarChart size={48} className="mx-auto text-slate-200 mb-4" />
-        <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">No Audit Generated</h3>
-        <p className="text-sm text-slate-400 font-bold uppercase tracking-widest mt-2">Please run the CMC batch uploader to generate an integration audit.</p>
+      <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[2rem] border-2 border-dashed border-slate-100 dark:border-teal-900/20">
+        <FileBarChart size={48} className="mx-auto text-teal-100 dark:text-teal-900 mb-4" />
+        <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Aucun audit généré</h3>
+        <p className="text-sm text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-2">Veuillez exécuter l'importateur par lots CMC pour générer un audit.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 pb-12">
-      <div className="bg-white dark:bg-[#1E293B] p-8 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800">
+    <div className="space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-teal-900/20">
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase mb-2">CMC Integration Report</h1>
+            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase mb-2">Rapport d'Intégration CMC</h1>
             <div className="flex items-center gap-4 text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest">
-              <span className="flex items-center gap-1.5"><Clock size={12} /> {report.timestamp}</span>
-              <span className="flex items-center gap-1.5"><Package size={12} /> CMC Regional Hub</span>
+              <span className="flex items-center gap-1.5"><Clock size={12} className="text-cmc-teal" /> {report.timestamp}</span>
+              <span className="flex items-center gap-1.5"><Package size={12} className="text-cmc-teal" /> Hub Régional Casablanca</span>
             </div>
           </div>
-          <div className="bg-cmc-teal text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-cmc-teal/20">
-            CMC Audit Finalized
+          <div className="bg-cmc-teal text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-teal-500/20">
+            Audit CMC Finalisé
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-emerald-50 dark:bg-emerald-950/30 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-900/50">
-             <p className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">CMC Validated</p>
-             <p className="text-4xl font-black text-emerald-700 dark:text-emerald-300 tracking-tighter">{report.okCount}/{report.totalChecked}</p>
+          <div className="bg-teal-50 dark:bg-teal-950/30 p-5 rounded-2xl border border-teal-100 dark:border-teal-900/50">
+             <p className="text-[10px] font-black text-cmc-teal uppercase tracking-widest mb-1">CMC Validé</p>
+             <p className="text-4xl font-black text-cmc-teal dark:text-teal-400 tracking-tighter">{report.okCount}/{report.totalChecked}</p>
           </div>
           <div className="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-100 dark:border-rose-900/50">
-             <p className="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-1">Missing Files</p>
+             <p className="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-1">Fichiers Manquants</p>
              <p className="text-4xl font-black text-rose-700 dark:text-rose-300 tracking-tighter">{report.missingCount}</p>
           </div>
-          <div className="bg-cyan-50 dark:bg-cyan-950/30 p-5 rounded-2xl border border-cyan-100 dark:border-cyan-900/50">
-             <p className="text-[10px] font-black text-cmc-teal uppercase tracking-widest mb-1">Registry Refreshed</p>
-             <p className="text-4xl font-black text-cmc-teal dark:text-cyan-300 tracking-tighter">{report.okCount}</p>
+          <div className="bg-slate-50 dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-teal-900/20">
+             <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Registres Actualisés</p>
+             <p className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter">{report.okCount}</p>
           </div>
         </div>
 
         {report.missingCount > 0 && (
-          <div className="mb-8">
+          <div className="mb-8 p-6 bg-rose-50/30 dark:bg-rose-900/10 rounded-3xl border border-rose-100 dark:border-rose-900/20">
              <h3 className="text-[11px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <AlertTriangle size={14} /> Critical: Missing CMC Files
+                <AlertTriangle size={14} /> Critique : Fichiers CMC Manquants
              </h3>
              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                {report.missingGroups.map(g => (
-                 <div key={g} className="bg-rose-50/50 dark:bg-rose-900/10 p-2 rounded-lg border border-rose-100/50 dark:border-rose-900/20 text-[10px] font-bold text-rose-600 dark:text-rose-400">
-                    MISSING - {g}
+                 <div key={g} className="bg-white/80 dark:bg-slate-900 p-2 rounded-lg border border-rose-100 dark:border-rose-900/20 text-[10px] font-bold text-rose-600 dark:text-rose-400 text-center">
+                    MANQUANT - {g}
                  </div>
                ))}
              </div>
@@ -67,13 +67,13 @@ export const IntegrationReportView: React.FC<Props> = ({ report, allGroups }) =>
 
         <div>
            <h3 className="text-[11px] font-black text-cmc-teal uppercase tracking-widest mb-4 flex items-center gap-2">
-              <CheckCircle2 size={14} /> Synchronized Registry
+              <CheckCircle2 size={14} /> Registre Synchronisé
            </h3>
            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
              {report.updatedGroups.map(g => (
-               <div key={g} className="bg-emerald-50/50 dark:bg-emerald-900/10 p-2 rounded-lg border border-emerald-100/50 dark:border-emerald-900/20 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-between">
+               <div key={g} className="bg-teal-50/50 dark:bg-teal-900/10 p-2 rounded-lg border border-teal-100 dark:border-teal-900/20 text-[10px] font-bold text-teal-700 dark:text-teal-400 flex items-center justify-between px-3">
                   <span>OK - {g}</span>
-                  <CheckCircle2 size={10} />
+                  <CheckCircle2 size={10} className="text-cmc-teal" />
                </div>
              ))}
            </div>

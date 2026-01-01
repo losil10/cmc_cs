@@ -55,7 +55,7 @@ export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed
       onDataParsed(pendingOverwrite.groupData);
       setSuccessCount(prev => prev + 1);
       
-      const allUpdated = Object.values(uploadedGroups)
+      const allUpdated = (Object.values(uploadedGroups) as GroupData[])
         .filter(g => g.status === 'OK')
         .map(g => g.name);
       
@@ -103,29 +103,29 @@ export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed
         
         <div className={`border-2 border-dashed rounded-[2rem] p-16 flex flex-col items-center justify-center transition-all shadow-inner ${
           isUploading 
-            ? 'bg-slate-50 dark:bg-[#0F172A] border-slate-300 dark:border-slate-800' 
-            : 'bg-white dark:bg-[#1E293B] border-slate-200 dark:border-slate-800 group-hover:border-cmc-teal'
+            ? 'bg-teal-50/50 dark:bg-teal-950/20 border-teal-300 dark:border-teal-800' 
+            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-teal-900/20 group-hover:border-cmc-teal group-hover:bg-teal-50/20'
         }`}>
           {pendingOverwrite ? (
             <div className="flex flex-col items-center text-center animate-in zoom-in-95">
               <RefreshCw size={56} className="text-amber-500 animate-spin mb-6" style={{ animationDuration: '3s' }} />
               <h3 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Overwrite CMC Record</h3>
               <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-bold uppercase tracking-widest max-w-md">
-                An existing CMC schedule for <span className="text-cmc-teal">{pendingOverwrite.groupData.name}</span> was found. 
-                Proceed with update?
+                Un emploi du temps existant pour <span className="text-cmc-teal">{pendingOverwrite.groupData.name}</span> a été trouvé. 
+                Voulez-vous le remplacer ?
               </p>
               <div className="flex gap-4 mt-8">
                 <button 
                   onClick={confirmOverwrite}
-                  className="px-8 py-3 bg-cmc-teal text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg hover:brightness-110 transition-all"
+                  className="px-8 py-3 bg-cmc-teal text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-teal-500/20 hover:brightness-110 transition-all"
                 >
-                  Confirm Update
+                  Confirmer
                 </button>
                 <button 
                   onClick={() => setPendingOverwrite(null)}
                   className="px-8 py-3 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
                 >
-                  Cancel
+                  Annuler
                 </button>
               </div>
             </div>
@@ -133,19 +133,19 @@ export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed
             <div className="flex flex-col items-center text-center animate-pulse">
               <Loader2 size={56} className="text-cmc-teal animate-spin mb-6" />
               <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight uppercase">Registry Ingestion</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-mono uppercase tracking-widest">Validating CMC compliance via AI...</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-mono uppercase tracking-widest">Validation CMC via IA...</p>
             </div>
           ) : (
             <div className="flex flex-col items-center text-center">
-              <div className="w-24 h-24 bg-cmc-teal text-white rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-cmc-teal/20 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+              <div className="w-24 h-24 bg-cmc-teal text-white rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-teal-500/30 rotate-3 group-hover:rotate-0 transition-transform duration-500">
                 <Upload size={40} />
               </div>
               <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">CMC Timetable Sync</h3>
               <p className="text-slate-500 dark:text-slate-400 text-sm mt-4 max-w-sm font-bold leading-relaxed uppercase tracking-tighter">
-                Drop CMC PDF files. The system will auto-extract cohort identifiers using Gemini AI.
+                Déposez vos fichiers PDF. Le système extraira automatiquement les identifiants de cohorte via Gemini AI.
               </p>
-              <button className="mt-10 px-10 py-4 bg-slate-900 dark:bg-cmc-teal text-white rounded-2xl font-black shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-xs">
-                Browse Files
+              <button className="mt-10 px-10 py-4 bg-slate-900 dark:bg-cmc-teal text-white rounded-2xl font-black shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-xs shadow-teal-500/20">
+                Parcourir les fichiers
               </button>
             </div>
           )}
@@ -160,14 +160,14 @@ export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed
       )}
 
       {successCount > 0 && !isUploading && (
-        <div className="bg-emerald-600 dark:bg-emerald-700 border border-emerald-700 dark:border-emerald-800 rounded-3xl p-6 flex items-center justify-between text-white shadow-2xl animate-in slide-in-from-top-4 duration-500">
+        <div className="bg-teal-600 dark:bg-teal-700 border border-teal-700 dark:border-teal-800 rounded-3xl p-6 flex items-center justify-between text-white shadow-2xl animate-in slide-in-from-top-4 duration-500">
           <div className="flex items-center gap-5">
             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
               <CheckCircle size={28} />
             </div>
             <div>
-              <p className="text-lg font-black uppercase tracking-tight">CMC Sync Successful</p>
-              <p className="text-sm opacity-80 font-bold uppercase tracking-widest text-[10px]">{successCount} CMC schedules processed correctly.</p>
+              <p className="text-lg font-black uppercase tracking-tight">CMC Sync Réussi</p>
+              <p className="text-sm opacity-80 font-bold uppercase tracking-widest text-[10px]">{successCount} emplois du temps CMC traités.</p>
             </div>
           </div>
         </div>
@@ -175,12 +175,12 @@ export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
         {[
-          { icon: <FileText size={20} />, title: "CMC Standards", desc: "Extracts Cohort & Prof based on Cité des métiers metadata.", color: "cyan" },
-          { icon: <Package size={20} />, title: "Campus Inventory", desc: "Strict filtering for DIA prefix rooms. CMC regional isolation.", color: "cmc-teal" },
-          { icon: <Loader2 size={20} />, title: "Instant Mapping", desc: "AI-driven slot alignment for the CMC Salle Monitore.", color: "cmc-teal" },
+          { icon: <FileText size={20} />, title: "Standards CMC", desc: "Extraction automatique basée sur les métadonnées de Cité des métiers.", color: "teal" },
+          { icon: <Package size={20} />, title: "Inventaire Campus", desc: "Filtrage strict pour les salles DIA. Isolation régionale CMC.", color: "teal" },
+          { icon: <Loader2 size={20} />, title: "Mapping Instantané", desc: "Alignement piloté par l'IA pour le CMC Salle Monitore.", color: "teal" },
         ].map((item, i) => (
-          <div key={i} className="bg-white dark:bg-[#1E293B] p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-10 h-10 bg-cmc-teal/10 text-cmc-teal rounded-xl flex items-center justify-center mb-5">
+          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-teal-900/20 shadow-sm hover:shadow-md hover:border-cmc-teal transition-all">
+            <div className="w-10 h-10 bg-teal-50 dark:bg-teal-950/40 text-cmc-teal rounded-xl flex items-center justify-center mb-5">
               {item.icon}
             </div>
             <h4 className="font-black text-slate-800 dark:text-white text-[11px] uppercase tracking-widest mb-2">{item.title}</h4>
