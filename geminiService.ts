@@ -1,9 +1,15 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, SchemaType } from "@google/genai";
 import { GroupData, ScheduleEntry, DayOfWeek, TimeSlot } from "./types";
 import { TIME_SLOTS, normalizeCohortID } from "./constants";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+// 👇 THIS WAS THE BUG. WE CHANGED IT TO 'import.meta.env' 👇
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+if (!apiKey) {
+  console.error("CRITICAL ERROR: Google Gemini API Key is missing. Please add VITE_GEMINI_API_KEY to your .env file or Vercel Settings.");
+}
+
+const ai = new GoogleGenAI({ apiKey: apiKey || "dummy_key_to_prevent_crash" });
 
 export const parseSchedulePDF = async (file: File, filename: string): Promise<GroupData> => {
   const base64Data = await fileToBase64(file);
@@ -23,8 +29,10 @@ export const parseSchedulePDF = async (file: File, filename: string): Promise<Gr
     Return only valid JSON.
   `;
 
+  // Note: 'gemini-2.0-flash' is the current stable standard, but 'gemini-1.5-flash' is also fine.
+  // If 'gemini-3-flash-preview' fails, switch to 'gemini-1.5-flash'.
   const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-1.5-flash", 
     contents: [
       {
         parts: [
@@ -41,19 +49,19 @@ export const parseSchedulePDF = async (file: File, filename: string): Promise<Gr
     config: {
       responseMimeType: "application/json",
       responseSchema: {
-        type: Type.OBJECT,
+        type: SchemaType.OBJECT,
         properties: {
-          groupName: { type: Type.STRING },
-          revisionDate: { type: Type.STRING },
+          groupName: { type: SchemaType.STRING },
+          revisionDate: { type: SchemaType.STRING },
           entries: {
-            type: Type.ARRAY,
+            type: SchemaType.ARRAY,
             items: {
-              type: Type.OBJECT,
+              type: SchemaType.OBJECT,
               properties: {
-                day: { type: Type.STRING },
-                timeSlot: { type: Type.STRING },
-                room: { type: Type.STRING },
-                professor: { type: Type.STRING }
+                day: { type: SchemaType.STRING },
+                timeSlot: { type: SchemaType.STRING },
+                room: { type: SchemaType.STRING },
+                professor: { type: SchemaType.STRING }
               },
               required: ["day", "timeSlot", "room", "professor"]
             }
@@ -64,7 +72,7 @@ export const parseSchedulePDF = async (file: File, filename: string): Promise<Gr
     }
   });
 
-  const rawJson = JSON.parse(response.text || "{}");
+  const rawJson = JSON.parse(response.text() || "{}");
   
   // Apply normalization as a strict safety measure
   const normalizedGroupName = normalizeCohortID(rawJson.groupName || "");
