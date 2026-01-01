@@ -11,6 +11,7 @@ import { GroupData, DayOfWeek, IntegrationReport as IReport, ReportedProblem, Pr
 import { DAYS, FULL_GROUP_CHECKLIST, normalizeCohortID, MASTER_ROOM_LIST } from './constants';
 // Added Clock to the imports from lucide-react
 import { LayoutDashboard, UploadCloud, Calendar, Moon, Sun, Search as SearchIcon, FileBarChart, ArrowLeft, AlertCircle, BarChart3, Clock } from 'lucide-react';
+import { supabase } from './lib/supabaseClient';
 
 const App: React.FC = () => {
   const [uploadedGroups, setUploadedGroups] = useState<Record<string, GroupData>>({});
