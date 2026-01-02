@@ -4,6 +4,7 @@ import { Upload, FileText, Loader2, AlertCircle, CheckCircle, Package, RefreshCw
 import { GroupData, IntegrationReport } from '../types';
 import { FULL_GROUP_CHECKLIST } from '../constants';
 import { parseSchedulePDF } from '../geminiService';
+import { useLanguage } from '../LanguageContext';
 
 interface UploaderProps {
   uploadedGroups: Record<string, GroupData>;
@@ -12,6 +13,7 @@ interface UploaderProps {
 }
 
 export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed, onIntegrationComplete }) => {
+  const { t } = useLanguage();
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successCount, setSuccessCount] = useState(0);
@@ -109,43 +111,42 @@ export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed
           {pendingOverwrite ? (
             <div className="flex flex-col items-center text-center animate-in zoom-in-95">
               <RefreshCw size={56} className="text-amber-500 animate-spin mb-6" style={{ animationDuration: '3s' }} />
-              <h3 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Overwrite CMC Record</h3>
+              <h3 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{t('upload_overwrite_title')}</h3>
               <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-bold uppercase tracking-widest max-w-md">
-                Un emploi du temps existant pour <span className="text-cmc-teal">{pendingOverwrite.groupData.name}</span> a été trouvé. 
-                Voulez-vous le remplacer ?
+                {t('upload_overwrite_desc')} <span className="text-cmc-teal">{pendingOverwrite.groupData.name}</span> {t('upload_overwrite_confirm')}
               </p>
               <div className="flex gap-4 mt-8">
                 <button 
                   onClick={confirmOverwrite}
                   className="px-8 py-3 bg-cmc-teal text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-teal-500/20 hover:brightness-110 transition-all"
                 >
-                  Confirmer
+                  {t('btn_confirm')}
                 </button>
                 <button 
                   onClick={() => setPendingOverwrite(null)}
                   className="px-8 py-3 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
                 >
-                  Annuler
+                  {t('btn_cancel')}
                 </button>
               </div>
             </div>
           ) : isUploading ? (
             <div className="flex flex-col items-center text-center animate-pulse">
               <Loader2 size={56} className="text-cmc-teal animate-spin mb-6" />
-              <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight uppercase">Registry Ingestion</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-mono uppercase tracking-widest">Validation CMC via IA...</p>
+              <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight uppercase">{t('ingestion_title')}</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-mono uppercase tracking-widest">{t('ingestion_desc')}</p>
             </div>
           ) : (
             <div className="flex flex-col items-center text-center">
               <div className="w-24 h-24 bg-cmc-teal text-white rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-teal-500/30 rotate-3 group-hover:rotate-0 transition-transform duration-500">
                 <Upload size={40} />
               </div>
-              <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">CMC Timetable Sync</h3>
+              <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">{t('upload_title')}</h3>
               <p className="text-slate-500 dark:text-slate-400 text-sm mt-4 max-w-sm font-bold leading-relaxed uppercase tracking-tighter">
-                Déposez vos fichiers PDF. Le système extraira automatiquement les identifiants de cohorte via Gemini AI.
+                {t('upload_subtitle')}
               </p>
               <button className="mt-10 px-10 py-4 bg-slate-900 dark:bg-cmc-teal text-white rounded-2xl font-black shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-xs shadow-teal-500/20">
-                Parcourir les fichiers
+                {t('upload_btn')}
               </button>
             </div>
           )}
@@ -166,8 +167,8 @@ export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed
               <CheckCircle size={28} />
             </div>
             <div>
-              <p className="text-lg font-black uppercase tracking-tight">CMC Sync Réussi</p>
-              <p className="text-sm opacity-80 font-bold uppercase tracking-widest text-[10px]">{successCount} emplois du temps CMC traités.</p>
+              <p className="text-lg font-black uppercase tracking-tight">{t('success_title')}</p>
+              <p className="text-sm opacity-80 font-bold uppercase tracking-widest text-[10px]">{successCount} {t('success_desc')}</p>
             </div>
           </div>
         </div>
@@ -175,9 +176,9 @@ export const Uploader: React.FC<UploaderProps> = ({ uploadedGroups, onDataParsed
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
         {[
-          { icon: <FileText size={20} />, title: "Standards CMC", desc: "Extraction automatique basée sur les métadonnées de Cité des métiers.", color: "teal" },
-          { icon: <Package size={20} />, title: "Inventaire Campus", desc: "Filtrage strict pour les salles DIA. Isolation régionale CMC.", color: "teal" },
-          { icon: <Loader2 size={20} />, title: "Mapping Instantané", desc: "Alignement piloté par l'IA pour le CMC Salle Monitore.", color: "teal" },
+          { icon: <FileText size={20} />, title: t('card_standards'), desc: t('card_standards_desc'), color: "teal" },
+          { icon: <Package size={20} />, title: t('card_inventory'), desc: t('card_inventory_desc'), color: "teal" },
+          { icon: <Loader2 size={20} />, title: t('card_mapping'), desc: t('card_mapping_desc'), color: "teal" },
         ].map((item, i) => (
           <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-teal-900/20 shadow-sm hover:shadow-md hover:border-cmc-teal transition-all">
             <div className="w-10 h-10 bg-teal-50 dark:bg-teal-950/40 text-cmc-teal rounded-xl flex items-center justify-center mb-5">

@@ -2,7 +2,8 @@
 import React, { useState, useMemo } from 'react';
 import { GroupData, DayOfWeek, TimeSlot, MatrixData, ReportedProblem } from '../types';
 import { TIME_SLOTS, MASTER_ROOM_LIST } from '../constants';
-import { User, CheckCircle2, Filter, ChevronDown, Sparkles, AlertCircle, Clock, Check, X, ShieldAlert } from 'lucide-react';
+import { User, CheckCircle2, Filter, ChevronDown, Sparkles, AlertCircle, Clock, Check, ShieldAlert } from 'lucide-react';
+import { useLanguage } from '../LanguageContext';
 
 interface MatrixGridProps {
   groups: GroupData[];
@@ -15,6 +16,7 @@ interface MatrixGridProps {
 type FilterValue = 'all' | 'free' | 'occupied';
 
 export const MatrixGrid: React.FC<MatrixGridProps> = ({ groups, selectedDay, highlightedGroup, roomFilter = '', problems = [] }) => {
+  const { t } = useLanguage();
   const [columnFilters, setColumnFilters] = useState<Record<TimeSlot, FilterValue>>({
     "08:30 - 11:00": 'all',
     "11:00 - 13:30": 'all',
@@ -75,37 +77,37 @@ export const MatrixGrid: React.FC<MatrixGridProps> = ({ groups, selectedDay, hig
           <thead>
             <tr className="bg-cmc-deep-blue">
               <th className="sticky left-0 z-20 bg-cmc-deep-blue p-0 text-left border-r border-cmc-mint-ice/20 w-44 shadow-sm backdrop-blur-md">
-                <div className="px-6 py-10 text-[11px] font-black uppercase tracking-widest text-cmc-mint-ice">
-                  Identifiant Salle
+                <div className="px-6 py-12 text-[11px] font-black uppercase tracking-widest text-cmc-mint-ice opacity-80">
+                  {t('table_room_id')}
                 </div>
               </th>
               {TIME_SLOTS.map(slot => (
                 <th key={slot} className="relative p-0 text-center border-r border-cmc-mint-ice/20 border-b border-cmc-mint-ice/20 group/header">
                   <div className="flex flex-col h-full bg-cmc-deep-blue">
-                    <div className="p-4 border-b border-cmc-mint-ice/10 flex items-center justify-center gap-2 bg-black/10">
-                      <Clock size={12} className="text-cmc-mint-ice opacity-60" />
-                      <span className="text-[11px] font-black uppercase tracking-wider text-cmc-mint-ice">{slot}</span>
+                    <div className="p-4 border-b border-cmc-mint-ice/10 flex items-center justify-center gap-2 bg-black/20">
+                      <Clock size={12} className="text-cmc-mint-ice opacity-80" />
+                      <span className="text-[12px] font-black uppercase tracking-wider text-cmc-mint-ice">{slot}</span>
                     </div>
-                    {/* New Segmented Toggle Filter */}
-                    <div className="p-2 flex items-center justify-center">
-                      <div className="flex bg-black/30 p-1 rounded-xl gap-1 w-full max-w-[200px] border border-white/5">
+                    {/* High-Impact Segmented Control */}
+                    <div className="p-3 flex items-center justify-center">
+                      <div className="flex bg-black/40 p-1 rounded-xl gap-1 w-full max-w-[210px] border border-white/10">
                         <button 
                           onClick={() => setFilter(slot, 'all')}
-                          className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all ${columnFilters[slot] === 'all' ? 'bg-white/20 text-white shadow-sm' : 'text-white/40 hover:text-white/60'}`}
+                          className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all tracking-tighter ${columnFilters[slot] === 'all' ? 'bg-white/20 text-white shadow-sm ring-1 ring-white/10' : 'text-white/40 hover:text-white/80'}`}
                         >
-                          All
+                          {t('filter_all')}
                         </button>
                         <button 
                           onClick={() => setFilter(slot, 'free')}
-                          className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all flex items-center justify-center gap-1 ${columnFilters[slot] === 'free' ? 'bg-cmc-teal text-white shadow-lg shadow-teal-500/30' : 'text-white/40 hover:text-white/60'}`}
+                          className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all flex items-center justify-center gap-1.5 tracking-tighter ${columnFilters[slot] === 'free' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/40 ring-1 ring-white/10' : 'text-white/40 hover:text-emerald-400'}`}
                         >
-                          <Check size={10} /> Free
+                          <Check size={11} strokeWidth={3} /> {t('filter_free')}
                         </button>
                         <button 
                           onClick={() => setFilter(slot, 'occupied')}
-                          className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all flex items-center justify-center gap-1 ${columnFilters[slot] === 'occupied' ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30' : 'text-white/40 hover:text-white/60'}`}
+                          className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all flex items-center justify-center gap-1.5 tracking-tighter ${columnFilters[slot] === 'occupied' ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/40 ring-1 ring-white/10' : 'text-white/40 hover:text-rose-400'}`}
                         >
-                          <ShieldAlert size={10} /> Busy
+                          <ShieldAlert size={11} strokeWidth={3} /> {t('filter_busy')}
                         </button>
                       </div>
                     </div>
@@ -123,8 +125,8 @@ export const MatrixGrid: React.FC<MatrixGridProps> = ({ groups, selectedDay, hig
                        <Filter size={40} />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-slate-600 dark:text-slate-300 font-black uppercase tracking-widest text-sm">Aucun résultat</p>
-                      <p className="text-slate-400 dark:text-slate-500 text-xs font-medium uppercase tracking-tight">Essayez d'ajuster vos filtres de recherche</p>
+                      <p className="text-slate-600 dark:text-slate-300 font-black uppercase tracking-widest text-sm">{t('no_result_title')}</p>
+                      <p className="text-slate-400 dark:text-slate-500 text-xs font-medium uppercase tracking-tight">{t('no_result_desc')}</p>
                     </div>
                   </div>
                 </td>
@@ -150,12 +152,11 @@ export const MatrixGrid: React.FC<MatrixGridProps> = ({ groups, selectedDay, hig
                 }
 
                 return (
-                  <tr key={room} className="group transition-all duration-300 hover:brightness-110">
-                    <td className={`sticky left-0 z-10 p-0 border-r border-cmc-mint-ice/20 border-b border-cmc-mint-ice/10 transition-all duration-300 h-full ${hasProblem ? problemClass : 'bg-cmc-deep-blue text-cmc-mint-ice'}`}>
-                      <div className="px-6 h-32 flex items-center gap-3">
-                        {hasProblem && <AlertCircle size={20} className={`shrink-0 animate-pulse ${problemIconColor}`} />}
-                        {/* Increased font size for Room ID */}
-                        <span className="text-xl font-bold tracking-tight">{room}</span>
+                  <tr key={room} className="group transition-all duration-300 border-b border-slate-200 dark:border-teal-900/10 hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                    <td className={`sticky left-0 z-10 p-0 border-r border-cmc-mint-ice/30 transition-all duration-300 h-full group-hover:brightness-125 ${hasProblem ? problemClass : 'bg-cmc-deep-blue text-cmc-mint-ice shadow-xl'}`}>
+                      <div className="px-6 h-32 flex items-center gap-4">
+                        {hasProblem && <AlertCircle size={24} className={`shrink-0 animate-pulse ${problemIconColor}`} />}
+                        <span className="text-2xl font-black tracking-tighter drop-shadow-sm">{room}</span>
                       </div>
                     </td>
                     {TIME_SLOTS.map(slot => {
@@ -163,7 +164,7 @@ export const MatrixGrid: React.FC<MatrixGridProps> = ({ groups, selectedDay, hig
                       const isHighlighted = highlightedGroup && occupancy?.groupName === highlightedGroup;
 
                       return (
-                        <td key={`${room}-${slot}`} className={`p-0 border-r border-slate-200 dark:border-teal-900/10 border-b border-slate-200 dark:border-teal-900/10 h-32 relative overflow-hidden transition-colors ${!occupancy ? 'bg-white group-hover:bg-slate-50/50' : ''}`}>
+                        <td key={`${room}-${slot}`} className={`p-0 border-r border-slate-200 dark:border-teal-900/10 h-32 relative overflow-hidden transition-colors ${!occupancy ? 'bg-white' : ''}`}>
                           {occupancy ? (
                             <div className={`relative h-full w-full p-5 flex flex-col justify-center items-center text-center transition-all duration-500 group/cell ${
                               isHighlighted 
@@ -172,7 +173,7 @@ export const MatrixGrid: React.FC<MatrixGridProps> = ({ groups, selectedDay, hig
                             }`}>
                               {isHighlighted && <Sparkles className="absolute -top-3 -right-3 text-cyan-200 animate-bounce" size={24} />}
                               
-                              <span className={`text-[15px] font-black uppercase tracking-tight leading-none mb-3 truncate w-full group-hover/cell:scale-105 transition-transform ${isHighlighted ? 'text-white' : 'text-rose-900 dark:text-rose-100'}`}>
+                              <span className={`text-[16px] font-black uppercase tracking-tight leading-none mb-3 truncate w-full group-hover/cell:scale-105 transition-transform ${isHighlighted ? 'text-white' : 'text-rose-900 dark:text-rose-100'}`}>
                                 {occupancy.groupName}
                               </span>
                               
@@ -185,10 +186,10 @@ export const MatrixGrid: React.FC<MatrixGridProps> = ({ groups, selectedDay, hig
                             </div>
                           ) : (
                             <div className="bg-[#f0fdfa] h-full w-full flex flex-col items-center justify-center text-teal-700 opacity-90 group-hover:opacity-100 group-hover:bg-[#DCFCE7] transition-all duration-500 shadow-inner">
-                              <div className="w-10 h-10 rounded-2xl border-2 border-teal-200/50 flex items-center justify-center mb-2 bg-white shadow-sm group-hover:rotate-12 transition-transform">
-                                 <CheckCircle2 size={20} className="text-cmc-teal" />
+                              <div className="w-12 h-12 rounded-2xl border-2 border-teal-200/50 flex items-center justify-center mb-2 bg-white shadow-xl group-hover:rotate-6 transition-transform">
+                                 <CheckCircle2 size={24} className="text-cmc-teal" />
                               </div>
-                              <span className="text-[11px] font-black tracking-[0.2em] uppercase text-cmc-deep-blue">Salle Libre</span>
+                              <span className="text-[12px] font-black tracking-[0.25em] uppercase text-cmc-deep-blue">{t('room_free')}</span>
                             </div>
                           )}
                         </td>

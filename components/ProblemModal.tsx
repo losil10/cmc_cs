@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { X, AlertCircle, Send, Info, ShieldAlert, Zap } from 'lucide-react';
 import { MASTER_ROOM_LIST } from '../constants';
 import { ProblemPriority } from '../types';
+import { useLanguage } from '../LanguageContext';
 
 interface ProblemModalProps {
   onClose: () => void;
@@ -10,6 +10,7 @@ interface ProblemModalProps {
 }
 
 export const ProblemModal: React.FC<ProblemModalProps> = ({ onClose, onReport }) => {
+  const { t } = useLanguage();
   const [room, setRoom] = useState(MASTER_ROOM_LIST[0]);
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<ProblemPriority>("Important");
@@ -30,8 +31,8 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ onClose, onReport })
               <AlertCircle size={28} />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">Signaler un Problème</h2>
-              <p className="text-cmc-teal dark:text-teal-500 text-xs font-bold uppercase tracking-widest mt-1.5 opacity-90">Rapport d'incident campus</p>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">{t('modal_problem_title')}</h2>
+              <p className="text-cmc-teal dark:text-teal-500 text-xs font-bold uppercase tracking-widest mt-1.5 opacity-90">{t('modal_problem_subtitle')}</p>
             </div>
           </div>
           <button 
@@ -46,7 +47,7 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ onClose, onReport })
           {/* Select Field */}
           <div className="space-y-3">
             <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-              <ShieldAlert size={14} className="text-cmc-teal" /> Localisation du Problème
+              <ShieldAlert size={14} className="text-cmc-teal" /> {t('label_location')}
             </label>
             <div className="relative">
               <select 
@@ -67,12 +68,12 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ onClose, onReport })
           {/* Textarea Field - FIXED FONT COLOR */}
           <div className="space-y-3">
             <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-              <Info size={14} className="text-cmc-teal" /> Description de l'Incident
+              <Info size={14} className="text-cmc-teal" /> {t('label_desc')}
             </label>
             <textarea 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Décrivez l'anomalie (ex: Panne projecteur...)"
+              placeholder={t('placeholder_desc')}
               className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-200/60 dark:border-slate-700/50 rounded-2xl py-5 px-6 text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-4 focus:ring-cmc-teal/20 focus:border-cmc-teal outline-none transition-all min-h-[160px] resize-none"
               required
             />
@@ -81,7 +82,7 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ onClose, onReport })
           {/* Priority Field */}
           <div className="space-y-3">
             <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-              <Zap size={14} className="text-cmc-teal" /> Niveau de Priorité
+              <Zap size={14} className="text-cmc-teal" /> {t('label_priority')}
             </label>
             <div className="grid grid-cols-3 gap-4">
               {(["Important", "Urgent", "Plus Urgent"] as ProblemPriority[]).map((level) => {
@@ -93,6 +94,11 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ onClose, onReport })
                   else activeStyles = "bg-cmc-teal text-white border-cmc-teal shadow-xl shadow-teal-600/30";
                 }
                 
+                let label: string = level;
+                if (level === "Important") label = t('priority_important');
+                if (level === "Urgent") label = t('priority_urgent');
+                if (level === "Plus Urgent") label = t('priority_plus_urgent');
+
                 return (
                   <button
                     key={level}
@@ -104,7 +110,7 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ onClose, onReport })
                         : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700/50 hover:border-cmc-teal hover:text-cmc-teal'
                     }`}
                   >
-                    {level}
+                    {label}
                   </button>
                 );
               })}
@@ -117,7 +123,7 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ onClose, onReport })
               type="submit"
               className="w-full py-5 bg-gradient-to-r from-cmc-teal to-teal-800 text-white rounded-3xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-teal-500/40 hover:translate-y-[-4px] active:scale-95 transition-all flex items-center justify-center gap-3"
             >
-              <Send size={18} /> Envoyer le Rapport
+              <Send size={18} /> {t('btn_send')}
             </button>
           </div>
         </form>

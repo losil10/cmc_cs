@@ -3,6 +3,7 @@ import React from 'react';
 import { GroupData } from '../types';
 import { FULL_GROUP_CHECKLIST, normalizeCohortID } from '../constants';
 import { Users, CheckCircle, Search, Info, X, Upload, AlertCircle, Clock, LayoutDashboard } from 'lucide-react';
+import { useLanguage } from '../LanguageContext';
 
 interface SidebarProps {
   groups: GroupData[];
@@ -12,6 +13,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selectedGroupName, isDarkMode }) => {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = React.useState('');
 
   const uploadedNames = groups.filter(g => g.status === 'OK').map(g => normalizeCohortID(g.name));
@@ -37,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
           </div>
           <div>
             <h1 className="text-white font-black leading-none uppercase tracking-tight text-sm">CMC <span className="text-cmc-teal">REGISTRY</span></h1>
-            <p className="text-[10px] uppercase tracking-widest text-teal-500 font-bold mt-1">Salle Monitore</p>
+            <p className="text-[10px] uppercase tracking-widest text-teal-500 font-bold mt-1">{t('sidebar_subtitle')}</p>
           </div>
         </div>
 
@@ -45,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-cmc-teal transition-colors" size={14} />
           <input 
             type="text" 
-            placeholder="Search Cohorts..." 
+            placeholder={t('sidebar_search')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full bg-slate-800/50 border border-teal-900/30 rounded-lg py-2 pl-9 pr-9 text-xs font-semibold focus:ring-2 focus:ring-cmc-teal text-white placeholder:text-slate-500 outline-none transition-all"
@@ -64,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
       <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
         <div>
           <div className="flex items-center justify-between px-2 mb-2">
-            <p className="text-[10px] uppercase font-black text-slate-500 tracking-wider">Active Cohorts</p>
+            <p className="text-[10px] uppercase font-black text-slate-500 tracking-wider">{t('sidebar_active')}</p>
             <span className="text-[10px] bg-teal-900/30 text-cmc-teal px-2 py-0.5 rounded-full font-bold border border-teal-800/30">
               {uploadedNames.length}
             </span>
@@ -73,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
           <div className="space-y-1">
             {filteredGroups.length === 0 && !searchTerm && (
               <div className="px-4 py-8 text-center bg-slate-900/30 rounded-xl border border-dashed border-teal-900/20">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">No CMC data synced</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('sidebar_no_data')}</p>
               </div>
             )}
             {filteredGroups.map(group => {
@@ -93,7 +95,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
                       {group.name}
                     </span>
                     <span className={`text-[10px] font-medium ${isSelected ? 'text-teal-100' : 'text-slate-500'}`}>
-                      CMC Sync Verified
+                      {t('sidebar_sync_verified')}
                     </span>
                   </div>
                   {isSelected ? (
@@ -109,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
 
         <div>
           <div className="flex items-center justify-between px-2 mb-2">
-            <p className="text-[10px] uppercase font-black text-rose-500/70 tracking-wider">Missing CMC Files</p>
+            <p className="text-[10px] uppercase font-black text-rose-500/70 tracking-wider">{t('sidebar_missing')}</p>
             <span className="text-[10px] bg-rose-900/20 text-rose-400 px-2 py-0.5 rounded-full font-bold border border-rose-900/20">
               {pendingGroups.length}
             </span>
@@ -126,7 +128,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
                     {name}
                   </span>
                   <span className="text-[9px] font-medium text-rose-500 uppercase tracking-tighter">
-                    Pending Ingestion
+                    {t('sidebar_pending')}
                   </span>
                 </div>
                 <Clock size={12} className="text-slate-700" />
@@ -138,7 +140,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
 
       <div className="p-5 bg-black/40 border-t border-teal-900/20 shrink-0">
         <div className="bg-slate-900/50 border border-teal-900/20 rounded-xl p-4 shadow-sm">
-          <p className="text-[10px] text-slate-500 font-black uppercase mb-2 tracking-widest">Compliance Status</p>
+          <p className="text-[10px] text-slate-500 font-black uppercase mb-2 tracking-widest">{t('sidebar_compliance')}</p>
           <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
             <div 
               className="h-full bg-cmc-teal transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(13,148,136,0.5)]" 
@@ -146,7 +148,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ groups, onSelectGroup, selecte
             />
           </div>
           <div className="flex justify-between items-center mt-3">
-             <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">Synced: {uploadedNames.length}/{FULL_GROUP_CHECKLIST.length}</p>
+             <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">{t('sidebar_synced')}: {uploadedNames.length}/{FULL_GROUP_CHECKLIST.length}</p>
              <p className="text-[10px] text-cmc-teal font-black">{Math.round((uploadedNames.length / FULL_GROUP_CHECKLIST.length) * 100)}%</p>
           </div>
         </div>

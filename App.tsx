@@ -8,12 +8,12 @@ import { GroupDetailView } from './components/GroupDetailView';
 import { ProblemModal } from './components/ProblemModal';
 import { SummaryModal } from './components/SummaryModal';
 import { GroupData, DayOfWeek, IntegrationReport as IReport, ReportedProblem, ProblemStatus, ProblemPriority } from './types';
-import { DAYS, FULL_GROUP_CHECKLIST, normalizeCohortID, MASTER_ROOM_LIST } from './constants';
-// Added Clock to the imports from lucide-react
-import { LayoutDashboard, UploadCloud, Calendar, Moon, Sun, Search as SearchIcon, FileBarChart, ArrowLeft, AlertCircle, BarChart3, Clock } from 'lucide-react';
-import { supabase } from './lib/supabaseClient';
+import { DAYS, normalizeCohortID, MASTER_ROOM_LIST } from './constants';
+import { LayoutDashboard, Calendar, Moon, Sun, Search as SearchIcon, FileBarChart, ArrowLeft, AlertCircle, BarChart3, Clock, Languages } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const App: React.FC = () => {
+  const { t, language, setLanguage } = useLanguage();
   const [uploadedGroups, setUploadedGroups] = useState<Record<string, GroupData>>({});
   const [reportedProblems, setReportedProblems] = useState<ReportedProblem[]>([]);
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(DAYS[0]);
@@ -81,6 +81,7 @@ const App: React.FC = () => {
   };
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  const toggleLanguage = () => setLanguage(language === 'fr' ? 'en' : 'fr');
 
   const activeProblems = useMemo(() => reportedProblems.filter(p => p.status !== "Handled"), [reportedProblems]);
   
@@ -107,46 +108,46 @@ const App: React.FC = () => {
         />
 
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-          {/* Header updated for Pure White text and high visibility */}
-          <header className="h-16 bg-cmc-deep-blue border-b-2 border-cmc-teal/50 px-8 flex items-center justify-between shadow-xl shrink-0 z-30">
+          {/* Header optimized for maximum visibility and high contrast */}
+          <header className="h-16 bg-cmc-deep-blue border-b-[3px] border-cmc-teal px-8 flex items-center justify-between shadow-2xl shrink-0 z-30">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-3">
-                <div className="bg-cmc-teal p-2 rounded-xl shadow-lg shadow-teal-500/20">
+                <div className="bg-cmc-teal p-2 rounded-xl shadow-lg shadow-teal-500/40 border border-white/20">
                   <LayoutDashboard size={18} className="text-white" />
                 </div>
-                <h1 className="text-lg font-black text-white tracking-tight uppercase">CMC <span className="text-cmc-mint-ice">Matrix</span></h1>
+                <h1 className="text-lg font-black text-white tracking-tight uppercase">CMC <span className="text-cmc-mint-ice">{t('app_title')}</span></h1>
               </div>
-              <div className="h-8 w-px bg-white/10 mx-2" />
+              <div className="h-8 w-px bg-white/20 mx-2" />
               <nav className="flex items-center gap-2">
                 {[
-                  { id: 'matrix', label: 'Tableau de bord', icon: null },
-                  { id: 'upload', label: 'Synchronisation', icon: null },
-                  { id: 'report', label: 'Audit', icon: <FileBarChart size={14} /> }
+                  { id: 'matrix', label: t('nav_dashboard'), icon: null },
+                  { id: 'upload', label: t('nav_sync'), icon: null },
+                  { id: 'report', label: t('nav_audit'), icon: <FileBarChart size={14} /> }
                 ].map(tab => (
                   <button 
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all duration-200 flex items-center gap-2 uppercase tracking-wider ${
+                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all duration-200 flex items-center gap-2 uppercase tracking-widest ${
                       activeTab === tab.id 
-                        ? 'bg-cmc-teal text-white shadow-lg shadow-teal-500/40 translate-y-[-1px] active-glow' 
-                        : 'text-white/70 hover:bg-white/5 hover:text-white'
+                        ? 'bg-cmc-teal text-white shadow-xl shadow-teal-500/50 translate-y-[-1px] active-glow border border-white/30' 
+                        : 'text-white hover:bg-white/10'
                     }`}
                   >
                     {tab.icon} {tab.label}
                   </button>
                 ))}
-                <div className="w-px h-6 bg-white/10 mx-2" />
+                <div className="w-px h-6 bg-white/20 mx-2" />
                 <button 
                   onClick={() => setShowProblemModal(true)}
-                  className="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 uppercase tracking-wider"
+                  className="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 text-rose-300 hover:bg-rose-500/20 border border-transparent hover:border-rose-500/30 uppercase tracking-widest"
                 >
-                  <AlertCircle size={14} /> Signaler
+                  <AlertCircle size={14} /> {t('nav_report')}
                 </button>
                 <button 
                   onClick={() => setShowSummaryModal(true)}
-                  className="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 text-cmc-mint-ice hover:bg-white/5 border border-transparent hover:border-cmc-teal/30 uppercase tracking-wider"
+                  className="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 text-cmc-mint-ice hover:bg-white/10 border border-transparent hover:border-cmc-teal/40 uppercase tracking-widest"
                 >
-                  <BarChart3 size={14} /> Résumé
+                  <BarChart3 size={14} /> {t('nav_summary')}
                 </button>
               </nav>
             </div>
@@ -154,25 +155,32 @@ const App: React.FC = () => {
             <div className="flex items-center gap-4">
               {activeTab === 'matrix' && (
                 <div className="relative flex items-center">
-                  <SearchIcon size={14} className="absolute left-3 text-cmc-mint-ice/50" />
+                  <SearchIcon size={14} className="absolute left-3 text-cmc-mint-ice/70" />
                   <input 
                     type="text" 
-                    placeholder="Filtrer les salles..."
+                    placeholder={t('search_placeholder')}
                     value={roomSearch}
                     onChange={(e) => setRoomSearch(e.target.value)}
-                    className="bg-white/5 border-none rounded-xl py-2 pl-10 pr-4 text-xs font-medium focus:ring-2 focus:ring-cmc-teal transition-all w-56 text-white placeholder:text-cmc-mint-ice/30"
+                    className="bg-white/10 border-white/20 rounded-xl py-2 pl-10 pr-4 text-xs font-bold focus:ring-2 focus:ring-cmc-teal transition-all w-56 text-white placeholder:text-cmc-mint-ice/40"
                   />
                 </div>
               )}
 
               <button 
+                onClick={toggleLanguage}
+                className="p-2.5 rounded-xl bg-white/10 text-white border border-white/20 hover:border-cmc-teal hover:bg-white/20 transition-all font-black text-xs uppercase w-10 h-10 flex items-center justify-center"
+              >
+                {language.toUpperCase()}
+              </button>
+
+              <button 
                 onClick={toggleDarkMode}
-                className="p-2.5 rounded-xl bg-white/5 text-cmc-mint-ice border border-white/10 hover:border-cmc-teal hover:text-white transition-all"
+                className="p-2.5 rounded-xl bg-white/10 text-white border border-white/20 hover:border-cmc-teal hover:bg-white/20 transition-all"
               >
                 {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
               </button>
 
-              <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
+              <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/20">
                 <Calendar size={16} className="text-cmc-teal" />
                 <select 
                   value={selectedDay}
@@ -192,14 +200,14 @@ const App: React.FC = () => {
               <div className="max-w-[1600px] mx-auto space-y-8">
                 <div className="flex justify-between items-end">
                   <div className="space-y-1">
-                    <h2 className="text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Vue d'ensemble</h2>
+                    <h2 className="text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{t('overview_title')}</h2>
                     <p className="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-2">
-                      <Clock size={14} className="text-cmc-teal" /> État des salles en temps réel • {selectedDay}
+                      <Clock size={14} className="text-cmc-teal" /> {t('overview_subtitle')} • {selectedDay}
                     </p>
                   </div>
                   {highlightedGroup && (
                     <div className="flex items-center gap-3 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800/50 px-5 py-2.5 rounded-2xl text-cmc-teal text-[11px] font-black uppercase shadow-sm active-glow">
-                      <span>Cohorte en focus: <strong>{highlightedGroup}</strong></span>
+                      <span>{t('cohort_focus')}: <strong>{highlightedGroup}</strong></span>
                       <button onClick={() => setHighlightedGroup(null)} className="ml-2 w-5 h-5 flex items-center justify-center rounded-full hover:bg-cmc-teal hover:text-white transition-colors">×</button>
                     </div>
                   )}
@@ -239,7 +247,7 @@ const App: React.FC = () => {
                   onClick={() => setActiveTab('matrix')}
                   className="flex items-center gap-2 text-cmc-teal font-black text-xs uppercase mb-8 hover:translate-x-[-4px] transition-transform"
                 >
-                  <ArrowLeft size={16} /> Revenir au tableau de bord
+                  <ArrowLeft size={16} /> {t('nav_dashboard')}
                 </button>
                 <GroupDetailView group={uploadedGroups[selectedGroupView]} />
               </div>

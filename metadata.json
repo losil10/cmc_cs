@@ -1,5 +1,5 @@
 {
-  "name": "OFPPT Matrix & Schedule Tracker",
+  "name": "cmc Schedule Tracker",
   "description": "A high-performance classroom availability dashboard for OFPPT campuses. Visualizes room occupancy across time slots with automated PDF schedule parsing.",
   "requestFramePermissions": []
 }
